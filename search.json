@@ -1,0 +1,30 @@
+[
+  {
+    "objectID": "posts/welcome/index.html",
+    "href": "posts/welcome/index.html",
+    "title": "OlympicsWeather",
+    "section": "",
+    "text": "Bonjour , Bienvenue!Hello, welcome!¡Hola, bienvenido/a!你好，欢迎！مرحباً، أهلاً بك!\n\nCeci est mon blog personnel , mon petit coin météo dédié aux Jeux Olympiques de Paris 2024 ! Je vous partagerai toutes les prévisions météorologiques pour que vous puissiez profiter au mieux de l’événement, que ce soit sous le soleil ou la pluie. Restez connectés pour ne rien manquer !”"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "my_blog",
+    "section": "",
+    "text": "Bonjour , Bienvenue!Hello, welcome!¡Hola, bienvenido/a!你好，欢迎！مرحباً، أهلاً بك!\nCeci est mon blog personnel , mon petit coin météo dédié aux Jeux Olympiques de Paris 2024 ! Je vous partagerai toutes les prévisions météorologiques pour que vous puissiez profiter au mieux de l’événement, que ce soit sous le soleil ou la pluie. Restez connectés pour ne rien manquer !“\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n  \n\n\n\n\nprévisions météo\n\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\n\n\nMar 13, 2024\n\n\nBelane Lauriane\n\n\n\n\n\n\n  \n\n\n\n\nOlympicsWeather\n\n\n\n\n\n\n\nPrévisions\n\n\n\n\n\n\n\n\n\n\n\nMar 10, 2024\n\n\nLauriane\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "olympics",
+    "section": "",
+    "text": "About this blog: Ce blog est dédié à partager les prévisions météorologiques pour les Jeux Olympiques de Paris 2024, en fonction des dates, des heures et des lieux. Vous trouverez ici des informations précises et fiables pour vous aider à planifier vos activités lors de cet événement historique."
+  },
+  {
+    "objectID": "posts/post-with-code/index.html",
+    "href": "posts/post-with-code/index.html",
+    "title": "prévisions météo",
+    "section": "",
+    "text": "This is a post with executable code.\n\n1 + 1\n\n[1] 2"
+  }
+]
