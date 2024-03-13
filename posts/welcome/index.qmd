@@ -1,12 +1,12 @@
 ---
-title: "Welcome To My Blog"
-author: "Tristan O'Malley"
+title: "OlympicsWeather"
+author: "Lauriane"
 date: "2024-03-10"
-categories: [news]
+categories: [Prévisions]
 ---
 
-This is the first post in a Quarto blog. Welcome!
+*Bonjour , Bienvenue!Hello, welcome!¡Hola, bienvenido/a!你好，欢迎！مرحباً، أهلاً بك!*
 
 ![](thumbnail.jpg)
 
-Since this post doesn't specify an explicit `image`, the first image in the post will be used in the listing page of posts.
+Ceci est mon blog personnel , mon petit coin météo dédié aux Jeux Olympiques de Paris 2024 ! Je vous partagerai toutes les prévisions météorologiques pour que vous puissiez profiter au mieux de l'événement, que ce soit sous le soleil ou la pluie. Restez connectés pour ne rien manquer !"

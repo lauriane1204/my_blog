@@ -1,6 +1,6 @@
 ---
-title: "Post With Code"
-author: "Harlow Malloc"
+title: "prévisions météo"
+author: "Belane Lauriane"
 date: "2024-03-13"
 categories: [news, code, analysis]
 image: "image.jpg"
