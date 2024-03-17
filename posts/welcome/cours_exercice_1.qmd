@@ -1,0 +1,202 @@
+---
+title: "Analyse des données météorologiques pour les Jeux Olympiques d'hiver - Semaine 1"
+author: "Belane Lauriane"
+format: html
+editor: visual
+---
+
+# Paris sites olympiques et paralympiques
+
+## Importation de la base de données
+
+```{r}
+paris.2024.sites.olympiques.et.paralympiques.franciliens <- read.csv("C:/Users/BELANE/Downloads/paris-2024-sites-olympiques-et-paralympiques-franciliens.csv", sep=";")
+ View(paris.2024.sites.olympiques.et.paralympiques.franciliens)
+ 
+ Sites_Olym_para= paris.2024.sites.olympiques.et.paralympiques.franciliens
+
+```
+
+## Les noms et nature des colonnes
+
+```{r}
+ names(Sites_Olym)
+cat("Noms des colonnes :", names(Sites_Olym_para), "\n")
+cat("Nature des colonnes :", sapply(Sites_Olym_para, class), "\n")
+cat("Nombre de lignes :", nrow(Sites_Olym_para), "\n")
+
+```
+
+Nous pouvons dire que nous avons 4 colonnes : geo_point , noms , sites_olympiques_paralumpiqes et sports. les colonnes présentent des caractères , les données sont sous forme de caractères et nous avons 31 lignes.
+
+## Nombres de sites olympiques
+
+```{r}
+sites_olympiques <- Sites_Olym_para$sites_olympiques_paralympiques[grep("site olympique", Sites_Olym_para$sites_olympiques_paralympiques, ignore.case = TRUE)]
+cat("Nombre de sites olympiques :", length(sites_olympiques), "\n")
+```
+
+Il y'a ainsi 26 sites olympiques
+
+## Nombre de Sites paalympiques
+
+```{r}
+sites_paralympiques <- Sites_Olym_para$sites_olympiques_paralympiques[grep("site paralympique", Sites_Olym_para$sites_olympiques_paralympiques, ignore.case = TRUE)]
+cat("Nombre de sites paralympiques :", length(sites_paralympiques), "\n")
+
+```
+
+Il y'a 19 sites paralympiques
+
+## Les sites qui accueillent plusieurs disciplines
+
+```{r}
+
+library(stringr)
+
+  nombre_disciplines <- str_count(Sites_Olym$sites_olympiques_paralympiques, ",")
+  sites_multiples_disciplines <- Sites_Olym[Sites_Olym$sports > 0, ]
+  print(sites_multiples_disciplines$sites_olympiques_paralympiques)
+
+  sites_multidisciplinaires <- unique(Sites_Olym$sites_olympiques_paralympiques[Sites_Olym$sports > 1])
+  cat("Sites accueillant plusieurs disciplines sportives:", sites_multidisciplinaires, "\n")
+  
+
+```
+
+## Disciplines para -olym dans ces sites franciliens
+
+```{r}
+disciplines_paralympiques <- unique(Sites_Olym_para$sports[Sites_Olym_para$sites_olympiques_paralympiques %in% c("Site olympique,Site paralympique", "Site paralympique")])
+
+nombre_disciplines_paralympiques <- length(disciplines_paralympiques)
+
+cat("Nombre de disciplines paralympiques :", nombre_disciplines_paralympiques, "\n")
+
+
+```
+
+Il y'a 19 disciplines paralympiques
+
+## Site(s) accueillant le plus de disciplines différentes
+
+```{r}
+library(tidyr)
+library(dplyr)
+
+# Créer une colonne 'site_sport' en combinant les colonnes 'nom' et 'sports'
+Sites_Olym_para <- Sites_Olym_para %>%
+  mutate(site_sport = paste(nom, sports, sep = " - "))
+
+# Créer une colonne 'type_site' pour indiquer si le site est olympique, paralympique, ou les deux
+Sites_Olym_para <- Sites_Olym_para %>%
+  mutate(type_site = case_when(
+    grepl("olympique", tolower(sites_olympiques_paralympiques)) & grepl("paralympique", tolower(sites_olympiques_paralympiques)) ~ "Olympique et Paralympique",
+    grepl("olympique", tolower(sites_olympiques_paralympiques)) ~ "Olympique",
+    grepl("paralympique", tolower(sites_olympiques_paralympiques)) ~ "Paralympique",
+    TRUE ~ "Autre"
+  ))
+
+# Trouver le site avec le plus grand nombre de disciplines différentes, en tenant compte du type de site
+max_disciplines_site <- Sites_Olym_para %>%
+  separate_rows(sports, sep = ",") %>%
+  group_by(type_site, site_sport) %>%
+  summarize(num_disciplines = n_distinct(trimws(sports))) %>%
+  slice(which.max(num_disciplines)) %>%
+  pull(site_sport)
+
+cat("Site(s) accueillant le plus de disciplines différentes :", max_disciplines_site, "\n")
+
+```
+
+le stade de la concorde est le site qui accueille le plus de disciplines differentes , il s'agit d'un site olympique.
+
+## Discipline qui aura lieu sur le plus grand nombre de sites
+
+```{r}
+
+
+library(tidyverse)
+
+# Création une colonne 'site_sport' en combinant les colonnes 'nom' et 'sports'
+Sites_Olym_para <- Sites_Olym_para %>%
+  mutate(site_sport = paste(nom, sports, sep = " - "))
+
+# Séparation les disciplines multiples
+disciplines <- Sites_Olym_para %>%
+  separate_rows(sports, sep = ",")
+
+#  les espaces inutiles
+disciplines <- disciplines %>%
+  mutate(sports = trimws(sports))
+
+#  la discipline qui aura lieu sur le plus grand nombre de sites
+max_discipline <- disciplines %>%
+  count(sports) %>%
+  slice(which.max(n)) %>%
+  pull(sports)
+
+cat("Discipline qui aura lieu sur le plus grand nombre de sites :", max_discipline, "\n")
+
+```
+
+Il s'agit donc de l'athlétisme .
+
+## Deux sites les plus proches
+
+```{r}
+
+if (!requireNamespace("geosphere", quietly = TRUE)) {
+  install.packages("geosphere")
+}
+
+
+library(geosphere)
+
+# la colonne geo_point en deux colonnes : latitude et longitude
+Sites_Olym_para <- Sites_Olym_para %>%
+  separate(col = geo_point, into = c("latitude", "longitude"), sep = ", ", convert = TRUE)
+
+# la distance entre les sites
+distances <- distHaversine(Sites_Olym_para[, c("longitude", "latitude")])
+
+# les indices des deux sites les plus proches
+indices_proches <- which(distances == min(distances))
+
+# les noms des deux sites les plus proches
+min_distance_sites <- Sites_Olym_para$nom[indices_proches]
+cat("Les deux sites les plus proches sont :", min_distance_sites, "\n")
+
+  
+```
+
+Il s'agit arena paris sud 1 et porte de versailles.
+
+## Deux sites les plus éloignés
+
+```{r}
+library(geosphere)
+
+# Calculer la distance entre les sites olympiques et paralympiques
+distance <- distVincentySphere(
+  p1 = Sites_Olym_para %>% filter(type_site == "Olympique") %>% select(longitude, latitude) %>% as.matrix(),
+  p2 = Sites_Olym_para %>% filter(type_site == "Paralympique") %>% select(longitude, latitude) %>% as.matrix()
+)
+
+# Trouver les deux sites les plus proches
+min_distance_sites <- Sites_Olym_para$sites_olympiques_paralympiques[which(distance == min(distance))]
+cat("Les deux sites les plus proches :", min_distance_sites, "\n")
+
+# Trouver les deux sites les plus éloignés
+max_distance_sites <- Sites_Olym_para$sites_olympiques_paralympiques[which(distance == max(distance))]
+cat("Les deux sites les plus éloignés :", max_distance_sites, "\n")
+
+```
+
+# Barycentre des sites olympiques (moyenne des coordonnées)
+
+```{r}
+ barycentre_latitude <- mean(Sites_Olym_para$Latitude[grep("olympique", Sites_Olym_para$sports, ignore.case = TRUE)])
+  barycentre_longitude <- mean(Sites_Olym_para$Longitude[grep("olympique", Sites_Olym_para$sports, ignore.case = TRUE)])
+  cat("Barycentre des sites olympiques (Latitude, Longitude) :", barycentre_latitude, barycentre_longitude, "\n")
+```

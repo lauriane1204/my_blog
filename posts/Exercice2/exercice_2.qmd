@@ -1,0 +1,255 @@
+---
+title: "exercice 2"
+author: "Belane Lauriane"
+format: html
+editor: visual
+---
+
+## Exercice 2
+
+```{r}
+# Install the required packages
+install.packages("rvest")
+install.packages("purrr")
+install.packages("XML")
+
+# Load the libraries
+library(rvest)
+library(purrr)
+library(XML)
+```
+
+
+## Lire les tables epuis le site web
+
+```{r}
+url <- "https://fr.wikipedia.org/wiki/Liste_des_m%C3%A9daill%C3%A9s_olympiques"
+tables <- url %>%
+  read_html() %>%
+  html_nodes(".wikitable") %>%
+  html_table()
+
+
+print(tables[[1]])
+
+```
+
+l'objet list_tables devrait normalement contenir une liste de tables extraites du site web https://fr.wikipedia.org/wiki/Liste_des_m%C3%A9daill%C3%A9s_olympiques. Cependant, en raison d'un problème lors de l'extraction ou du formatage des tables, les données actuelles ne sont pas correctement organisées en tant que tableau structuré.
+
+
+## Extraire la première table
+
+```{r}
+data_medailles_sport_ete <- tables[[1]]
+
+```
+
+### Formatage de la table 
+
+```{r}
+# Formattage de la table
+data_medailles_sport_ete <- data_medailles_sport_ete[-1, -1]  # Supprimer la première colonne et la première ligne
+colnames(data_medailles_sport_ete) <- c("Discipline", "Annees", "Editions", "Epreuves_2020", "Or", "Argent", "Bronze", "Total", "Athletes_medailles", "Athletes_or")
+data_medailles_sport_ete[, c("Editions", "Epreuves_2020", "Or", "Argent", "Bronze", "Total")] <- lapply(data_medailles_sport_ete[, c("Editions", "Epreuves_2020", "Or", "Argent", "Bronze", "Total")], as.integer)
+
+```
+
+##  Les 3 disciplines avec le plus de médailles distribuées
+
+```{r}
+
+data_medailles_sport_ete <- data_medailles_sport_ete[order(-data_medailles_sport_ete$Total), ]
+
+top_disciplines <- head(data_medailles_sport_ete[order(-data_medailles_sport_ete$Total), "Discipline"], 3)
+
+print(top_disciplines)
+
+```
+
+
+les 3 disciplines avec le plus e médailles sont : athlétisme , natation et lutte 
+
+##  Disciplines avec le moins d'épreuves en 2020
+
+```{r}
+disciplines_moins_epreuves <- data_medailles_sport_ete[order(data_medailles_sport_ete$Epreuves_2020), "Discipline"]
+print(disciplines_moins_epreuves)
+```
+
+les disciplines avec le moins d'épreuve en 2020 sont : football , golf , handball , hockey sur gazon , natation synchronisée , volley-ball 
+
+##  Calcul du nombre d'éditions
+
+```{r}
+nb_editions <- calcul_nb_editions_int(1896)
+print(nb_editions)
+```
+
+il y'a 129 éditions 
+
+
+## Calcul du nombre d'éditions (chaîne de caractères)
+
+```{r}
+
+nb_editions_str <- calcul_nb_editions_str("1896, 1900, 1904, 1908")
+print(nb_editions_str)
+
+
+```
+
+il y'en a 7 éditions en chaines de caractères 
+
+
+## Fonction générique pour le calcul du nombre d'éditions
+```{r}
+calcul_nb_editions <- function(depuis) {
+  if (is.numeric(depuis)) {
+    return(calcul_nb_editions_int(depuis))
+  } else if (is.character(depuis)) {
+    return(calcul_nb_editions_str(depuis))
+  } else {
+    stop("Type non pris en charge.")
+  }
+}
+
+# Appel avec un entier
+nb_editions_int <- calcul_nb_editions(2000)
+cat("Nombre d'éditions (entier) :", nb_editions_int, "\n")
+
+# Appel avec une chaîne de caractères
+nb_editions_str <- calcul_nb_editions("1896, 1900, 1904, 1908")
+cat("Nombre d'éditions (chaîne de caractères) :", nb_editions_str, "\n")
+
+
+
+```
+
+nombre d'éditions en chaine de caractères est de 7 et le nombr d'édition en entier est de 25
+
+
+
+## Fonction pour calculer le nombre maximal de médailles obtenu par un athlète
+
+```{r}
+calcul_medailles_individuelles <- function(cell) {
+  medailles <- strsplit(cell, "\\)\\s*")[[1]]
+  medailles <- strsplit(medailles, "\\(\\s*")[[1]]
+  medailles <- medailles[-length(medailles)]  # Supprimer le dernier élément vide
+  medailles <- sapply(medailles, function(x) sum(as.numeric(strsplit(x, "-")[[1]])))
+  return(max(medailles))
+}
+
+
+```
+
+
+
+## Top 3 des athlètes
+
+```{r}
+calcul_medailles_individuelles <- function(cell) {
+  print(paste("Cellule d'entrée:", cell))  # Ajoutez cette ligne
+  medailles <- strsplit(cell, "\\)\\s*")[[1]]
+  medailles <- strsplit(medailles, "\\(\\s*")[[1]]
+  medailles <- medailles[-length(medailles)]  # Supprimer le dernier élément vide
+
+  print(paste("Medailles après les étapes de séparation:", medailles)) 
+
+  medailles <- sapply(medailles, function(x) sum(as.numeric(strsplit(x, "-")[[1]])))
+  return(max(medailles))
+}
+
+
+
+
+
+```
+
+```{r}
+ calcul_medailles_individuelles <- function(cell) {
+  print(paste("Cellule d'entrée:", cell))
+  medailles <- strsplit(cell, "\\)\\s*")[[1]]
+  medailles <- strsplit(medailles, "\\(\\s*")[[1]]
+  medailles <- medailles[-length(medailles)]  # Supprimer le dernier élément vide
+
+  print(paste("Medailles après les étapes de séparation:", medailles))
+  
+  medailles <- sapply(medailles, function(x) {
+    print(paste("Valeur de x avant la conversion:", x))
+    converted <- as.numeric(strsplit(x, "-")[[1]])
+    
+    # Remplacer les valeurs non numériques par 0
+    converted[is.na(converted)] <- 0
+    
+    print(paste("Valeur de x après la conversion:", converted))
+    
+    sum(converted)
+  })
+  
+  return(max(medailles, na.rm = TRUE))  # Ajout de na.rm pour gérer les NA
+}
+
+
+exemple_resultat <- calcul_medailles_individuelles("Paavo Nurmi (FIN) (9-3-0) Carl Lewis (USA) (9-1-0)")
+
+
+```
+
+
+
+##  nationalités les plus présentées 
+
+```{r}
+
+
+nationalites <- sapply(data_medailles_sport_ete$Athletes_medailles, extraire_nationalite_athlete)
+
+
+nationalites <- nationalites[sapply(nationalites, function(x) length(x) > 0)]
+
+
+combined_nationalites <- table(unlist(nationalites))
+
+
+top_nationalites <- head(sort(combined_nationalites, decreasing = TRUE), 3)
+
+
+cat("Les trois nationalités les plus représentées :\n")
+print(names(top_nationalites))
+
+
+
+
+                               
+```
+
+
+
+##  Appliquer les fonctions aux JO d'hiver (utilisation de purrr)
+
+```{r}
+library(purrr)
+library(dplyr)
+
+list_tables <- session("https://fr.wikipedia.org/wiki/Liste_des_m%C3%A9daill%C3%A9s_olympiques") |>
+  html_elements(".wikitable") |>
+  html_table()
+
+
+data_medailles_jo_hiver <- list_tables[[2]]
+
+# Calcul le top 3 des athlètes pour les JO d'hiver
+
+top_athletes_jo_hiver <- data_medailles_jo_hiver %>%
+  rowwise() %>%
+  mutate(Top_athletes_score = calcul_medailles_individuelles(Athletes_medailles)) %>%
+  arrange(desc(Top_athletes_score)) %>%
+  slice(1:3) %>%
+  rename(Discipline = Discipline.1, `Nombre de` = `Nombre de.1`, `médailles décernés` = `médailles décernés.1`, `médailles décernés` = `médailles décernés.1`)
+
+#  le top 3 des athlètes pour les JO d'hiver
+print(top_athletes_jo_hiver)
+
+```
+

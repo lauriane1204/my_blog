@@ -6,10 +6,60 @@ categories: [news, code, analysis]
 image: "image.jpg"
 ---
 
-This is a post with executable code.
+# Librairie olympicsWeather
+
+Le package \`olympicsWeather\` est un outil puissant pour obtenir des prévisions météorologiques précises pour les sites des Jeux Olympiques de Paris 2024. Il fournit des informations détaillées sur les conditions météorologiques en fonction des dates, des heures et des lieux spécifiques des événements olympiques.
+
+Pour installer ce package depuis GitHub , vous pouvez utiliser le package ***remotes***.
+
 
 ```{r}
-1 + 1
+#Installation de package remotes
+install.packages("remotes")
+
+# Installer le package olympicsWeather depuis GitHub
+remotes::install_github("Lauriane1204/olympicsWeather")
 ```
+
+où vous devez remplacer "lauriane1204" par votre nom d'utilisateur sur GitHub et "olympicsWeather" par le nom de votre package.
+
+
+## Prévisions météo pour le Stade de France
+
+
+Dans cette section, nous examinerons les prévisions météorologiques à 7 jours pour le Stade de France.
+
+```{r}
+library(olympicsWeather)
+
+# Appel de fonction pour obtenir les prévisions météo pour le Stade de France
+
+weather_forecast_stade_france <- get_forecast("Stade de France")
+
+# Affichage des prévisions météo
+print(weather_forecast_stade_france)
+summary(weather_forecast_stade_france)
+
+
+```
+
+
+## Prévisions pour Tahiti
+
+```{r}
+weather_forecast_tahiti <- get_forecast("Tahiti")
+print(weather_forecast_tahiti)
+summary(weather_forecast_tahiti)
+```
+
+## Prévisions pour les coordonnées GPS 43.276703, 5.334791
+```{r}
+weather_forecast_coords <- get_forecast(43.276703, 5.334791)
+print(weather_forecast_coords)
+summary(weather_forecast_coords)
+```
+
+
+
 
 
