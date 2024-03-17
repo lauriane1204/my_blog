@@ -1,0 +1,23 @@
+---
+title: "my_blog"
+listing:
+  contents: posts
+  sort: "date desc"
+  type: default
+  categories: true
+  sort-ui: false
+  filter-ui: false
+page-layout: full
+title-block-banner: true
+---
+
+# Bonjour , Bienvenue!Hello, welcome!¡Hola, bienvenido/a!你好，欢迎！مرحباً، أهلاً بك!
+
+*Ceci est mon blog personnel , mon petit coin météo dédié aux Jeux Olympiques de Paris 2024 ! Je vous partagerai toutes les prévisions météorologiques pour que vous puissiez profiter au mieux de l'événement, que ce soit sous le soleil ou la pluie. Restez connectés pour ne rien manquer !"*
+
+```{r include_image ,echo=FALSE}
+
+knitr::include_graphics("Blue.png", error = FALSE)
+
+
+```
